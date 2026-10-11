@@ -1,0 +1,20 @@
+# Allow only runtime code and the catalogue in the build context.
+**
+!Dockerfile
+!.dockerignore
+!requirements.txt
+!main.py
+!catalog.py
+!retrieval.py
+!models.py
+!ordinet.py
+!tools.py
+!returns.py
+!approval.py
+!data/
+data/**
+!data/gift-shop-catalog.csv
+!data/search-vectors.json
+!frontend/
+frontend/**
+!frontend/index.html

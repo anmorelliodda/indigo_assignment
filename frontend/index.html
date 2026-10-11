@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Sottobosco: una piccola bottega immaginaria, per trovare un regalo che abbia un perché.">
+  <title>Sottobosco — Regali con un perché</title>
+  <style>
+    :root { color-scheme: light; --ink: #223d32; --paper: #faf7ef; --accent: #e4a384; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font: 17px/1.6 system-ui, sans-serif; }
+    a { color: inherit; }
+    header, main, footer { max-width: 1080px; margin: auto; padding: 24px; }
+    header { display: flex; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1px solid #223d3226; }
+    .brand { font: bold 26px Georgia, serif; text-decoration: none; }
+    .tag { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; }
+    .hero { display: grid; grid-template-columns: 1.4fr 1fr; align-items: center; gap: 48px; padding: 56px 0; }
+    h1 { font: normal clamp(40px, 6vw, 72px)/1.08 Georgia, serif; margin: 16px 0 24px; }
+    h2 { font: normal 25px Georgia, serif; }
+    p { max-width: 540px; }
+    button { border: 0; border-radius: 28px; padding: 14px 24px; background: var(--ink); color: white; font: inherit; cursor: pointer; }
+    button:hover { background: #355848; }
+    button:disabled { opacity: .65; cursor: wait; }
+    :focus-visible { outline: 3px solid #b9552c; outline-offset: 4px; }
+    .gift { height: 290px; border-radius: 50% 50% 16px 16px; background: #e8eadd; display: grid; place-items: center; }
+    .box { position: relative; width: 170px; height: 150px; background: var(--accent); border-radius: 8px; transform: rotate(-8deg); box-shadow: 14px 16px 0 #223d3215; }
+    .box::before { content: ''; position: absolute; inset: 0 68px; background: var(--ink); }
+    .box::after { content: ''; position: absolute; left: -10px; top: 18px; width: 190px; height: 25px; background: var(--ink); border-radius: 4px; }
+    .ideas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding-bottom: 32px; }
+    .ideas article { border-top: 1px solid #223d3240; }
+    .ideas p { font-size: 15px; }
+    footer { border-top: 1px solid #223d3226; padding-bottom: 110px; font-size: 13px; }
+    #launcher { position: fixed; right: 24px; bottom: 24px; z-index: 100; box-shadow: 0 6px 24px #223d3230; }
+    #chat-status { font-size: 14px; min-height: 24px; }
+    @media (max-width: 640px) {
+      .hero { grid-template-columns: 1fr; gap: 24px; padding: 32px 0; }
+      .gift { height: 190px; }
+      .box { transform: rotate(-8deg) scale(.8); }
+      .ideas { grid-template-columns: 1fr; gap: 0; }
+      header .tag { display: none; }
+      #launcher { right: 16px; bottom: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a class="brand" href="#">sottobosco.</a>
+    <span class="tag">Piccole idee, pensate bene</span>
+  </header>
+  <main>
+    <section class="hero" aria-labelledby="title">
+      <div>
+        <span class="tag">Un regalo comincia da una persona</span>
+        <h1 id="title">Non una cosa in più.<br>Un pensiero giusto.</h1>
+        <p>Raccontaci cosa ama, quanto vuoi spendere e cosa vuoi celebrare. Il nostro assistente AI ti aiuta a trovare un regalo e ti spiega perché sceglierlo.</p>
+        <button type="button" data-chat>Troviamo il tuo regalo →</button>
+        <p id="chat-status" role="status" aria-live="polite"></p>
+      </div>
+      <div class="gift" aria-hidden="true"><div class="box"></div></div>
+    </section>
+    <section class="ideas" aria-label="Da dove cominciare">
+      <article><h2>Parti da un interesse.</h2><p>La cucina, la casa, un piccolo rituale: ciò che piace è un buon punto di partenza.</p></article>
+      <article><h2>Trova il suo perché.</h2><p>Non solo una lista. Chiedi cosa rende una proposta adatta alla persona che hai in mente.</p></article>
+      <article><h2>Hai già un ordine?</h2><p>L'assistente può consultare lo stato con numero ordine ed email usata per l'acquisto.</p></article>
+    </section>
+  </main>
+  <footer>
+    <strong>Sottobosco è un brand immaginario.</strong> Demo con catalogo e ordini di test; nessun acquisto o pagamento è disponibile.
+    Prezzi e disponibilità vengono verificati in chat. Numero ed email non sono un login cliente.
+    <a href="https://clair.platform.indigo.ai/chatbot/0a015e5c-50ee-41c3-96bc-faf2e2e0e7ae" target="_blank" rel="noopener noreferrer">Apri la chat in una nuova scheda</a>.
+  </footer>
+  <button id="launcher" type="button" data-chat aria-label="Apri l'assistente AI Sottobosco">✦ Chiedi a Sottobosco</button>
+  <noscript><p>Attiva JavaScript oppure usa il link alla chat.</p></noscript>
+  <script>
+    // Keep widget state local; do not collide with names inside the provider script.
+    (() => {
+    // Public Live project identifier, NOT a PAT or backend API key.
+    // Release together with the published context hook, goal and matching tool collection.
+    const PROJECT_TOKEN = '0a015e5c-50ee-41c3-96bc-faf2e2e0e7ae';
+    const status = document.getElementById('chat-status');
+    const buttons = document.querySelectorAll('[data-chat]');
+    let widget = null;
+    let loading = false;
+    let timer;
+    // Restore usable controls on load failure; leave the direct chat link as fallback.
+    function unavailable() {
+      status.textContent = 'La chat non si è caricata. Usa il link alla chat qui sotto o ricarica la pagina.';
+      buttons.forEach(button => { button.disabled = false; });
+      clearTimeout(timer);
+    }
+    // The loaded event can omit detail; use the provider global as a fallback.
+    document.addEventListener('indigo-ai-widget-loaded', event => {
+      widget = event.detail?.widget || window.IndigoAIChat;
+      clearTimeout(timer);
+      buttons.forEach(button => { button.disabled = false; });
+      status.textContent = '';
+      widget.setOpen(true);
+    });
+    // Load only after a visitor clicks; subsequent clicks reuse the existing widget.
+    buttons.forEach(button => button.addEventListener('click', () => {
+      if (widget) { widget.setOpen(true); return; }
+      if (loading) { unavailable(); return; }
+      loading = true;
+      status.textContent = 'Apro il tuo assistente…';
+      buttons.forEach(button => { button.disabled = true; });
+      const script = document.createElement('script');
+      script.id = 'iaw-script';
+      script.src = `https://platform.indigo.ai/widget.js?token=${PROJECT_TOKEN}&v=3&trigger=off`;
+      script.onerror = unavailable;
+      timer = setTimeout(unavailable, 20000);
+      document.body.appendChild(script);
+    }));
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+fastapi==0.142.2
+uvicorn==0.54.0
+httpx==0.28.1
+python-dotenv==1.2.4
+defusedxml==0.7.1
+azure-data-tables==12.7.0
+azure-identity==1.26.0
+tzdata==2026.5
