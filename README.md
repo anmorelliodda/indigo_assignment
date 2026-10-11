@@ -354,6 +354,12 @@ The source goal includes an assortment map across the 11 catalogue categories. I
 
 **Decision:** prompt rules guide the conversation. Deterministic validation, live filters, email comparison and send coordination remain in Python. Prompt instructions are not security controls or guarantees of model behavior.
 
+### Efficiency and latency — agent instruction
+
+The following instruction is intended for the end of the agent goal. Five tool calls per turn is a recommended target, not a backend-enforced limit. Necessary live checks and return safeguards take priority. Updating this README does not update or publish the platform agent; the operator must add the instruction and republish it.
+
+> **EFFICIENZA E LATENZA:** punta a non superare 5 chiamate ai tool per turno: è un limite consigliato, non rigido. Riusa metadati e opzioni già verificati, senza sostituire le verifiche live necessarie con risultati precedenti. Evita ricerche ripetitive e fermati quando hai proposte sufficienti e pertinenti. Supera il limite solo per verifiche essenziali. Se interrompi una ricerca parziale, non dichiarare assenza di alternative o primati assoluti: sii completo, ma anche rapido.
+
 ### Platform connection
 
 1. Import the served OpenAPI into the Gift Shop collection.
